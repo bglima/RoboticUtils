@@ -20,54 +20,49 @@ def quatProd(q1, q2):
     v = q2[1:]
     # Defining scalar and vector part from new quaternion
     q[0] = u0*v0 - np.dot(u, v)
-    q[1:] = u0*v + v0*u + np.cross(u, v)  
+    q[1:] = u0*v + v0*u + np.cross(u, v)
     return q
 
 """ Plot a line between two points given an axis with a specific color"""
-def plotLine(ax, p2, p1=[0, 0, 0], color='black', label=''):
-     ax.plot([p1[0], p2[0]],
-             [p1[1], p2[1]],
-             [p1[2], p2[2]], 
+def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coord=True):
+    ax.plot([p1[0][0], p2[0][0]],
+             [p1[1][0], p2[1][0]],
+             [p1[2][0], p2[2][0]],
              color=color)
-     if label:
-        ax.text(p2[0], p2[1], p2[2] , label)
-        
-
-""" Init and setup axis. Needed before plotting vectors. """    
+    if label:
+        ax.text(p2[0][0], p2[1][0], p2[2][0] , label)
+    elif coord:
+        ax.text(p2[0][0], p2[1][0], p2[2][0] , '({:.2f}, {:.2f}, {:.2f})'.format(p2[0][0], p2[1][0], p2[2][0]))
+""" Init and setup axis. Needed before plotting vectors. """
 def initPlot():
     # Define figure
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    
+
     # Defining origin and unit vectors
-    origin = [0, 0, 0]
-    x_axis = [1, 0, 0]  
-    y_axis = [0, 1, 0]
-    z_axis = [0, 0, 1]
-     
-    # Defining labels and initial view angle
+    origin = np.array([0, 0, 0]).reshape(3, 1)  # Set a 3-by-1 column vector
+    x_axis = np.array([1, 0, 0]).reshape(3, 1)
+    y_axis = np.array([0, 1, 0]).reshape(3, 1)
+    z_axis = np.array([0, 0, 1]).reshape(3, 1)
+
+    # Defining initial view angle
     ax.view_init(30, 90)
 
     # Hide axes ticks
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_zticks([])
+    plt.axis('off')
 
     # Plot axis lines
     plotLine(ax, x_axis, origin, 'red', 'X Axis')
     plotLine(ax, y_axis, origin, 'green', 'Y Axis')
-    plotLine(ax, z_axis, origin, 'blue', 'Z Axis') 
-    plt.show()  
-    
+    plotLine(ax, z_axis, origin, 'blue', 'Z Axis')
     return ax
-    
-if __name__ == '__main__': 
+
+if __name__ == '__main__':
     # Generate a random normalized axis vector
     w = np.random.rand(3, 1)
-    w_norm = np.linalg.norm(w)
+    w_norm = w / np.linalg.norm(w)
 
     # Plot lines
     ax = initPlot()
-#    plotLine(ax, w_norm)
-    
-
+    plotLine(ax, w_norm, color='black')
+    plt.show()
