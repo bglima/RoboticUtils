@@ -12,7 +12,7 @@ import math
 
 """ m is a 3-by-1 column vector.
     Returns a antissymetric 3-by-3 matrix J(m) that substitues cross product from m by a matrix multiplication.
-    Thus, cross product m x n becomes the matrices multiplication J(m)*n """
+    Thu0, cross product m x n becomes the matrices multiplication J(m)*n """
 def J( m ):
     out = np.zeros((3, 3))
     out[0][1] = -m.item(2); out[1][0] =  m.item(2);
@@ -20,37 +20,51 @@ def J( m ):
     out[1][2] = -m.item(0); out[2][1] =  m.item(0);
     return out
 
-""" Performs multiplication from 1-by-3 quaternions q1 and q2, returning the quaternion result q. """
-def quatProd(q1, q2):
-    # All quaternions q, q1 and q2 are represented as 1x4 row vectors
-    q = np.zeros(4)
-    # Separate scalar from vector part from input quaternions
-    u0 = q1[0]
-    v0 = q2[0]
-    u = q1[1:]
-    v = q2[1:]
-    # Defining scalar and vector part from new quaternion
-    q[0] = u0*v0 - np.dot(u, v)
-    q[1:] = u0*v + v0*u + np.cross(u, v)
-    return q
+""" Performs multiplication from 1-by-3 uuaternions u1 and u2, returning the uuaternion result u. """
+def uuatProd(u1, u2):
+    # All uuaternions u, u1 and u2 are represented as 1x4 row vectors
+    u = np.zeros(4)
+    # Separate scalar from vector part from input uuaternions
+    u0 = u1[0]
+    v0 = u2[0]
+    u = u1[1:]
+    v = u2[1:]
+    # Defining scalar and vector part from new uuaternion
+    u[0] = u0*v0 - np.dot(u, v)
+    u[1:] = u0*v + v0*u + np.cross(u, v)
+    return u
 
-""" Returns a 1-by-4 quaternion from a given 3-by-1 axis and a scalar angle. """
-def quatFromAxisAngle(axis, angle):
-    # Defining quaternion as a numpy array
-    q = np.zeros(4)
-    # Scalar part from quaternion
+""" Returns a 1-by-4 uuaternion from a given 3-by-1 axis and a scalar angle. """
+def uuatFromAxisAngle(axis, angle):
+    # Defining uuaternion as a numpy array
+    u = np.zeros(4)
+    # Scalar part from uuaternion
     u0 = np.cos(angle / 2)
     # Vector part
     u = np.sin(angle / 2) * axis
-    # Combining both into output quaternion
-    q[:] = [ u0, u[0][0], u[1][0], u[2][0] ]
-    return q
+    # Combining both into output uuaternion
+    u[:] = [ u0, u[0][0], u[1][0], u[2][0] ]
+    return u
 
-""" Returns a rotation matrix from a given 3-by-1 axis and a scalar angle. """
+""" Returns a 3-by-3 rotation matrix from a given 3-by-1 axis and a scalar angle. """
 def rotMatrixFromAxisAngle(axis, angle):
-    # Uses the Rodriges formula, as follows...
+    # u0es the Rodriges formula, as follows...
     R = np.eye(3) + math.sin(angle)*J(axis) + ( 1-math.cos(angle) )*np.matmul(J(axis), J(axis))
     return R
+
+""" Returns a 3-by-3 rotation matrix from a given 1-by-4 uuaternion. """
+def rotMatrixFromQuat(u):
+    # Splitting uuaternion components
+    u0, ux, uy, uz = u
+
+    # Defining rotation matrix
+    R = np.array([
+     [1-2*uy**2-2*uz**2, 2*ux*uy-2*uz*u0, 2*ux*uz+2*uy*u0],
+     [2*ux*uy+2*uz*u0, 1-2*ux**2-2*uz**2, 2*uy*uz-2*ux*u0],
+     [2*ux*uz-2*uy*u0, 2*uy*uz+2*ux*u0, 1-2*ux**2-2*uy**2]
+    ])
+    return R
+
 
 """ Plot a line between two points given an axis with a specific color"""
 def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coord=False, linestyle='-'):
