@@ -37,14 +37,14 @@ def quatProd(u1, u2):
 """ Returns a 1-by-4 uuaternion from a given 3-by-1 axis and a scalar angle. """
 def quatFromAxisAngle(axis, angle):
     # Defining uuaternion as a numpy array
-    u = np.zeros(4)
+    u = np.zeros(3)
     # Scalar part from uuaternion
     u0 = np.cos(angle / 2)
     # Vector part
     u = np.sin(angle / 2) * axis
     # Combining both into output uuaternion
-    u[:] = [ u0, u[0][0], u[1][0], u[2][0] ]
-    return u
+    q = [ u0, u[0][0], u[1][0], u[2][0] ]
+    return q
 
 """ Returns a 3-by-3 rotation matrix from a given 3-by-1 axis and a scalar angle. """
 def rotMatrixFromAxisAngle(axis, angle):
