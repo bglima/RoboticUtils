@@ -32,7 +32,8 @@ def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coor
     if label:
         ax.text(p2[0][0], p2[1][0], p2[2][0] , label)
     elif coord:
-        ax.text(p2[0][0], p2[1][0], p2[2][0] , '({:.2f}, {:.2f}, {:.2f})'.format(p2[0][0], p2[1][0], p2[2][0]))
+        ax.text(p2[0][0], p2[1][0], p2[2][0] , '({:.3f}, {:.3f}, {:.3f})'.format(p2[0][0], p2[1][0], p2[2][0]))
+
 """ Init and setup axis. Needed before plotting vectors. """
 def initPlot():
     # Define figure
@@ -56,13 +57,3 @@ def initPlot():
     plotLine(ax, y_axis, origin, 'green', 'Y Axis')
     plotLine(ax, z_axis, origin, 'blue', 'Z Axis')
     return ax
-
-if __name__ == '__main__':
-    # Generate a random normalized axis vector
-    w = np.random.rand(3, 1)
-    w_norm = w / np.linalg.norm(w)
-
-    # Plot lines
-    ax = initPlot()
-    plotLine(ax, w_norm, color='black')
-    plt.show()
