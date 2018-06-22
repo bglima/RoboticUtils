@@ -24,11 +24,12 @@ def quatProd(q1, q2):
     return q
 
 """ Plot a line between two points given an axis with a specific color"""
-def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coord=True):
+def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coord=True, linestyle='-'):
     ax.plot([p1[0][0], p2[0][0]],
              [p1[1][0], p2[1][0]],
              [p1[2][0], p2[2][0]],
-             color=color)
+             color=color,
+             linestyle=linestyle)
     if label:
         ax.text(p2[0][0], p2[1][0], p2[2][0] , label)
     elif coord:

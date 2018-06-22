@@ -7,6 +7,6 @@ if __name__ == '__main__':
 
     # Plot lines
     ax = initPlot()
-    plotLine(ax, w_norm, color='black')
+    plotLine(ax, w_norm, color='black', linestyle='-.')
 
     plt.show()
