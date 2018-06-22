@@ -10,7 +10,17 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import math
 
-""" Performs multiplication from quaternions q1 and q2, returning the quaternion result q. """
+""" m is a 3-by-1 column vector.
+    Returns a antissymetric 3-by-3 matrix J(m) that substitues cross product from m by a matrix multiplication.
+    Thus, cross product m x n becomes the matrices multiplication J(m)*n """
+def J( m ):
+    out = np.zeros((3, 3))
+    out[0][1] = -m.item(2); out[1][0] =  m.item(2);
+    out[0][2] =  m.item(1); out[2][0] = -m.item(1);
+    out[1][2] = -m.item(0); out[2][1] =  m.item(0);
+    return out
+
+""" Performs multiplication from 1-by-3 quaternions q1 and q2, returning the quaternion result q. """
 def quatProd(q1, q2):
     # All quaternions q, q1 and q2 are represented as 1x4 row vectors
     q = np.zeros(4)
@@ -24,17 +34,19 @@ def quatProd(q1, q2):
     q[1:] = u0*v + v0*u + np.cross(u, v)
     return q
 
-""" m is a 3-by-1 column vector.
-    Returns a antissymetric 3-by-3 matrix J(m) that substitues cross product from m by a matrix multiplication.
-    Thus, cross product m x n becomes the matrices multiplication J(m)*n """
-def J( m ):
-    out = np.zeros((3, 3))
-    out[0][1] = -m.item(2); out[1][0] =  m.item(2);
-    out[0][2] =  m.item(1); out[2][0] = -m.item(1);
-    out[1][2] = -m.item(0); out[2][1] =  m.item(0);
-    return out
+""" Returns a 1-by-4 quaternion from a given 3-by-1 axis and a scalar angle. """
+def quatFromAxisAngle(axis, angle):
+    # Defining quaternion as a numpy array
+    q = np.zeros(4)
+    # Scalar part from quaternion
+    u0 = np.cos(angle / 2)
+    # Vector part
+    u = np.sin(angle / 2) * axis
+    # Combining both into output quaternion
+    q[:] = [ u0, u[0][0], u[1][0], u[2][0] ]
+    return q
 
-""" Returns a rotation matrix from a given axis and angle. """
+""" Returns a rotation matrix from a given 3-by-1 axis and a scalar angle. """
 def rotMatrixFromAxisAngle(axis, angle):
     # Uses the Rodriges formula, as follows...
     R = np.eye(3) + math.sin(angle)*J(axis) + ( 1-math.cos(angle) )*np.matmul(J(axis), J(axis))
