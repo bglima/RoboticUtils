@@ -21,7 +21,7 @@ def J( m ):
     return out
 
 """ Performs multiplication from 1-by-3 uuaternions u1 and u2, returning the uuaternion result u. """
-def uuatProd(u1, u2):
+def quatProd(u1, u2):
     # All uuaternions u, u1 and u2 are represented as 1x4 row vectors
     u = np.zeros(4)
     # Separate scalar from vector part from input uuaternions
@@ -35,7 +35,7 @@ def uuatProd(u1, u2):
     return u
 
 """ Returns a 1-by-4 uuaternion from a given 3-by-1 axis and a scalar angle. """
-def uuatFromAxisAngle(axis, angle):
+def quatFromAxisAngle(axis, angle):
     # Defining uuaternion as a numpy array
     u = np.zeros(4)
     # Scalar part from uuaternion
@@ -65,6 +65,47 @@ def rotMatrixFromQuat(u):
     ])
     return R
 
+""" Returns a tuple containing a 3-by-1 axis and a scalar angle form a 3-by-3 rotation matrix.
+    If angle is 0, there are infinite solutions. So, axis vector will be filled with NaN.
+    If angle is PI, there will be two possible solutions for the same rotation (PI and -PI).
+    Othewise, there will be only one possible angle and one possible axis.
+    References from http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToAngle/
+"""
+def axisAngleFromRotMatrix( R ):
+    angle = np.arccos( (np.trace(R)-1)/2.0 )
+    w = np.zeros(3).reshape(3, 1)
+
+    if angle == 0 :          # If angle is zero, fill vector with NaN
+        w.fill(np.nan)
+    elif angle == math.pi :  # If angle is PI, calculate two solutions (w, angle) and (-w, angle)
+        xx = ( R[0][0] + 1 ) / 2.0
+        yy = ( R[1][1] + 1 ) / 2.0
+        zz = ( R[2][2] + 1 ) / 2.0
+        xy = ( R[0][1] + R[1][0] ) / 4.0
+        xz = ( R[0][2] + R[2][0] ) / 4.0
+        yz = ( R[1][2] + R[2][1] ) / 4.0
+
+        # Checking for bigger diagonal to avoid numerical underflow
+        if (xx > yy) and (xx > zz):  # R(0, 0) is the largest diagonal term
+            x = math.sqrt(xx)
+            y = xy / x
+            z = xz / x
+        elif ( yy > zz):            # R(1, 1) is the largest diagonal term
+            y = math.sqrt(yy)
+            x = xy / y
+            z = xz / y
+        else:                       # R(3, 3) is the largest diagonal term
+            z = math.sqrt(zz)
+            x = xz / z
+            y = yz / z
+        # Compose double solution
+        w = np.array([ np.array([x, y, z]).reshape(3, 1), np.array([-x, -y, -z]).reshape(3, 1) ])
+        angle = np.array([angle, angle])
+
+    else:                    # If angle is neither 0 nor PI, calculate single solution
+        w = np.array([R[2][1]-R[1][2], R[0][2]-R[2][0], R[1][0]-R[0][1]]) * 1 / (2 * np.sin(angle))
+
+    return (w, angle)
 
 """ Plot a line between two points given an axis with a specific color"""
 def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coord=False, linestyle='-'):
