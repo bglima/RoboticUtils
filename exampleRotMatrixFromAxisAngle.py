@@ -1,6 +1,9 @@
 from robutils import *
 
 if __name__ == '__main__':
+    # Configuring numpy precision
+    np.set_printoptions(precision=4, suppress=True)
+
     # Generate a random normalized axis vector
     w = np.random.rand(3, 1)
     w = w / np.linalg.norm(w)
