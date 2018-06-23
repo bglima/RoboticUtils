@@ -46,6 +46,29 @@ def quatFromAxisAngle(axis, angle):
     q = [ u0, u[0][0], u[1][0], u[2][0] ]
     return q
 
+""" Performs a SLERP between two 1-by-4 unit quaternions and return all the intermediate quaternions.
+    Thus, return will be an array of STEPS quaternios, with first one being q1 and last one being q2.
+    The shortest path between q1 and q2 is always choosen. """
+def quatSLERP(q0, q1, steps):
+    # Array that will be returned
+    q_int = np.zeros((steps, 4))
+    # Creating a copy of q1
+    q1_updated = q1;
+    # Let theta be the angle between quaternions
+    # Also, let omega be equal to theta / 2
+    omega = np.arccos( np.dot(q0, q1) )
+    theta = omega*2
+    # Checking if theta is larger than pi. If so, chose shortest angle
+    if theta > np.pi:
+        q1_updated = q1 * (-1)
+        theta = 2*np.pi - theta
+        omega = theta / 2
+
+    for step in range(0, steps):
+        t = float(step) / (steps-1)
+        q_int[step] = np.multiply( ( np.sin((1-t)*omega) / np.sin(omega)), q0) + np.multiply( (np.sin(t*omega) / np.sin(omega)), q1)
+    return q_int
+
 """ Returns a 3-by-3 rotation matrix from a given 3-by-1 axis and a scalar angle. """
 def rotMatrixFromAxisAngle(axis, angle):
     # u0es the Rodriges formula, as follows...
