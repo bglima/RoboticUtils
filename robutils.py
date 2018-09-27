@@ -132,6 +132,8 @@ def axisAngleFromRotMatrix( R ):
 
 """ Plot a line between two points given an axis with a specific color"""
 def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coord=False, linestyle='-'):
+    p1 = np.array(p1)
+    p2 = np.array(p2)
     ax.plot([p1[0][0], p2[0][0]],
              [p1[1][0], p2[1][0]],
              [p1[2][0], p2[2][0]],
@@ -142,12 +144,13 @@ def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coor
     if coord:
         ax.text(p2[0][0], p2[1][0], p2[2][0] - 0.1 , '({:.3f}, {:.3f}, {:.3f})'.format(p2[0][0], p2[1][0], p2[2][0]))
 
-""" Init and setup axis. Needed before plotting vectors. """
-def initPlot():
-    # Define figure
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
 
+""" Init and setup axis. Needed before plotting vectors. """
+def initPlot(max_range, width=4, height=4):
+    # Define figure
+    fig = plt.figure(figsize=(width, height))
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_aspect('equal')
     # Defining origin and unit vectors
     origin = np.array([0, 0, 0]).reshape(3, 1)  # Set a 3-by-1 column vector
     x_axis = np.array([1, 0, 0]).reshape(3, 1)
@@ -164,4 +167,8 @@ def initPlot():
     plotLine(ax, x_axis, origin, 'red', 'X Axis')
     plotLine(ax, y_axis, origin, 'green', 'Y Axis')
     plotLine(ax, z_axis, origin, 'blue', 'Z Axis')
+
+    ax.set_xlim(-max_range, max_range)
+    ax.set_ylim(-max_range, max_range)
+    ax.set_zlim(-max_range*.25, 2*max_range)
     return ax
