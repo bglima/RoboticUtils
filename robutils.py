@@ -146,7 +146,7 @@ def plotLine(ax, p2, p1=np.zeros(3).reshape(3, 1), color='black', label='', coor
 
 
 """ Init and setup axis. Needed before plotting vectors. """
-def initPlot(max_range, width=4, height=4):
+def initPlot(max_range=5, width=4, height=4):
     # Define figure
     fig = plt.figure(figsize=(width, height))
     ax = fig.add_subplot(111, projection='3d')
