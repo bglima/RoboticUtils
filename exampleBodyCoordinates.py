@@ -1,4 +1,5 @@
 from robutils import *
+from random import uniform
 
 ax = initPlot(max_range=5, width=8, height=8)
 
@@ -10,9 +11,9 @@ vectorShoulderToShoulder = rightShoulder - leftShoulder
 # Define midpoint between shoulders
 centerShoulder = leftShoulder + vectorShoulderToShoulder / 2
 # Define hip point
-centerHip = np.matrix('[0.5;-0.8; 5.52]')
+centerHip = np.matrix('[0;-0.8; 5.52]')
 # Define hand point
-rightHand = np.matrix('[1.4; 1.8; 3.0]')
+rightHand = np.matrix('[0; 1.8; 3.0]')
 
 # Define vectors
 rightShoulderVector = rightShoulder - centerShoulder
@@ -36,7 +37,6 @@ xProjVector = xProj * xAxis
 yProjVector = yProj * yAxis
 zProjVector = zProj * zAxis
 
-
 # Visualize body vectors
 plotLine(ax, rightShoulder, centerShoulder, 'yellow')
 plotLine(ax, leftShoulder, centerShoulder, 'pink', 'leftShoulder')
@@ -53,8 +53,6 @@ plotLine(ax, zAxis + rightShoulder, rightShoulder,
 plotLine(ax, xProjVector + rightShoulder, rightShoulder, 'red', 'xProj')
 plotLine(ax, yProjVector + rightShoulder, rightShoulder, 'green', 'yProj')
 plotLine(ax, zProjVector + rightShoulder, rightShoulder, 'blue', 'zProj')
-
-
 
 # Show everything
 plt.show()
